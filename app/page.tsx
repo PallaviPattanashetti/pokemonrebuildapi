@@ -1,17 +1,19 @@
 
-
-use client";
+"use client";
 
 import { fetchPokemon } from "@/dataservices/dataservices";
-import { PokemonData } from "@/interfaces/interfaces";
-import React, { useState } from "react";
-import Image from "next/image"; // Added Image component
+import React, { useState, useEffect } from "react";
 
 export default function FetchPage() {
   const [search, setSearch] = useState("");
-  // Fixed: Specified PokemonData type instead of any
-  const [pokemon, setPokemon] = useState<PokemonData | null>(null);
-  const [favorites, setFavorites] = useState<PokemonData[]>([]);
+  const [pokemon, setPokemon] = useState<any>(null);
+  const [favorites, setFavorites] = useState<any[]>([]);
+  // Fix for hydration: Ensure component is mounted before rendering dynamic parts
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSearch = async () => {
     if (!search) return;
@@ -34,6 +36,9 @@ export default function FetchPage() {
       setFavorites([...favorites, pokemon]);
     }
   };
+
+  // Prevent hydration mismatch errors
+  if (!mounted) return null;
 
   return (
     <div
@@ -72,15 +77,10 @@ export default function FetchPage() {
         <section className="bg-[#1e40af]/30 backdrop-blur-md p-8 rounded-lg shadow-2xl border border-white/10">
           <h2 className="text-2xl font-bold mb-8 text-center">My ultimate Pokémon lineup</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-sm aspect-square flex items-center justify-center overflow-hidden border border-gray-400 relative">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-sm aspect-square flex items-center justify-center overflow-hidden border border-gray-400">
                 {favorites[i] ? (
-                  <Image 
-                    src={favorites[i].img} 
-                    fill 
-                    style={{ objectFit: 'contain' }} 
-                    alt="pokemon" 
-                  />
+                  <img src={favorites[i].img} className="w-full h-full object-contain" alt="pokemon" />
                 ) : (
                   <span className="text-gray-400 text-[10px] font-bold">EMPTY</span>
                 )}
@@ -92,28 +92,14 @@ export default function FetchPage() {
         <section className="bg-[#1e40af]/30 backdrop-blur-md p-10 rounded-lg shadow-2xl flex flex-col items-center min-h-[420px]">
           <h3 className="text-2xl font-bold mb-8 capitalize">Name: {pokemon?.name || "???"}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-center">
-            <div className="bg-white p-2 rounded-sm max-w-60 mx-auto border border-white aspect-square flex items-center justify-center w-full relative">
-              {pokemon && (
-                <Image 
-                  src={pokemon.img} 
-                  width={200} 
-                  height={200} 
-                  className="object-contain scale-125" 
-                  alt={pokemon.name} 
-                />
-              )}
+            <div className="bg-white p-2 rounded-sm max-w-60 mx-auto border border-white aspect-square flex items-center justify-center w-full">
+              {pokemon && <img src={pokemon.img} className="w-full h-auto object-contain scale-125" alt={pokemon.name} />}
             </div>
             <div className="text-center">
               <span className="text-2xl font-medium capitalize tracking-wider">{pokemon?.type || "---"}</span>
               {pokemon?.shinyImg && (
                 <div className="mt-4">
-                  <Image 
-                    src={pokemon.shinyImg} 
-                    width={80} 
-                    height={80} 
-                    className="mx-auto" 
-                    alt="shiny" 
-                  />
+                  <img src={pokemon.shinyImg} className="h-20 mx-auto" alt="shiny" />
                   <p className="text-yellow-400 text-[10px] font-bold">SHINY FORM</p>
                 </div>
               )}
@@ -127,14 +113,46 @@ export default function FetchPage() {
           </div>
         </section>
 
-        {/* ... Rest of your sections using <Image /> similarly ... */}
+        <section className="bg-[#1e40af]/30 backdrop-blur-md p-10 rounded-lg shadow-2xl min-h-[150px]">
+          <h4 className="text-2xl font-bold mb-6 border-b border-white/40 pb-2 inline-block">Moves:</h4>
+          <p className="text-sm text-slate-100 capitalize leading-relaxed">
+            {pokemon?.moves || ""}
+          </p>
+        </section>
+
+        <section className="bg-[#1e40af]/30 backdrop-blur-md p-10 rounded-lg shadow-2xl text-center min-h-[200px]">
+          <h5 className="text-2xl font-bold mb-10 text-white">Evolution Path</h5>
+          <div className="flex justify-center items-center gap-6 flex-wrap">
+            {/* Improved check for evolutionImages array length */}
+            {pokemon?.evolutionImages && pokemon.evolutionImages.length > 0 ? (
+              pokemon.evolutionImages.map((evoImg: string, index: number) => (
+                <div key={index} className="flex items-center gap-6">
+                  <div className="bg-white/10 p-2 rounded-full border border-white/20">
+                    <img src={evoImg} className="h-20 w-20 object-contain" alt={`evolution-${index}`} />
+                  </div>
+                  {index < pokemon.evolutionImages.length - 1 && (
+                    <span className="text-2xl font-bold text-white/50">→</span>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-xl italic capitalize text-white/60">
+                {pokemon?.evolution || "---"}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="bg-[#1a2b4b]/95 border border-white/20 p-6 rounded-md text-[13px] leading-relaxed shadow-lg">
+          <p>
+            <strong className="text-white">Location:</strong> 
+            <span className="capitalize px-2">{pokemon?.location || "---"}</span>
+          </p>
+        </section>
       </main>
     </div>
   );
 }
-
-
-
 
 
 
