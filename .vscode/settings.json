@@ -16,5 +16,5 @@
     ]
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["dataservices", "Pikachu", "Pokedex"]
+  "cSpell.words": ["dataservices", "Kanto", "Pikachu", "Pokedex"]
 }
