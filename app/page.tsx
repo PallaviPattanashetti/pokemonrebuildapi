@@ -10,7 +10,7 @@ export default function FetchPage() {
   const [pokemon, setPokemon] = useState<PokemonData | null>(null);
   const [favorites, setFavorites] = useState<PokemonData[]>([]);
   
-  // Mounted state prevents hydration errors in Next.js
+ 
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function FetchPage() {
     }
   };
 
-  // Return null until mounted to ensure client/server HTML match
+ 
   if (!mounted) return null;
 
   return (
@@ -82,7 +82,7 @@ export default function FetchPage() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="bg-white rounded-sm aspect-square flex items-center justify-center overflow-hidden border border-gray-400">
                 {favorites[i] ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
+        
                   <img src={favorites[i].img} className="w-full h-full object-contain" alt="pokemon" />
                 ) : (
                   <span className="text-gray-400 text-[10px] font-bold">EMPTY</span>
@@ -96,14 +96,14 @@ export default function FetchPage() {
           <h3 className="text-2xl font-bold mb-8 capitalize">Name: {pokemon?.name || "???"}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-center">
             <div className="bg-white p-2 rounded-sm max-w-60 mx-auto border border-white aspect-square flex items-center justify-center w-full">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+             
               {pokemon && <img src={pokemon.img} className="w-full h-auto object-contain scale-125" alt={pokemon.name} />}
             </div>
             <div className="text-center">
               <span className="text-2xl font-medium capitalize tracking-wider">{pokemon?.type || "---"}</span>
               {pokemon?.shinyImg && (
                 <div className="mt-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                 
                   <img src={pokemon.shinyImg} className="h-20 mx-auto" alt="shiny" />
                   <p className="text-yellow-400 text-[10px] font-bold">SHINY FORM</p>
                 </div>
@@ -132,7 +132,7 @@ export default function FetchPage() {
               pokemon.evolutionImages.map((evoImg: string, index: number) => (
                 <div key={index} className="flex items-center gap-6">
                   <div className="bg-white/10 p-2 rounded-full border border-white/20">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                   
                     <img src={evoImg} className="h-20 w-20 object-contain" alt={`evolution-${index}`} />
                   </div>
                   {index < pokemon.evolutionImages.length - 1 && (
