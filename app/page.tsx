@@ -56,7 +56,7 @@ export default function FetchPage() {
           <input 
             type="text" 
             className="w-full bg-[#1a2b4b]/90 border border-white rounded-md px-4 py-2 text-sm focus:outline-none placeholder:text-gray-400 text-white" 
-            placeholder="Search by Name and Id...."
+            placeholder="Search by Name or Id...."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
